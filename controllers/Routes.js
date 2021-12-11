@@ -20,7 +20,14 @@ const getIndex = (req, res) => {
     res.render("index.html");
 }
 
-
+const textMessage = () => {
+    client.messages.create({
+          body: 'Hello from Node',
+          to: '+919643608485', // Text this number
+          from: '+18334350557', // From a valid Twilio number
+        })
+        .then((message) => console.log(message))
+}
 ////////////////////////////////////////////////////////////////////
 
 const getMessage = (req,res) => {
@@ -28,14 +35,17 @@ const getMessage = (req,res) => {
     console.log(req.body.Body);
     const sender = req.body.ProfileName;
     const UserIndex = findusers(sender);
-  
+    
     const twiml = new MessagingResponse();
-  
+
     if(UserIndex === -1){
         createuser(sender);
-        twiml.message("Hi ! How can we help you today ?");
-    }else{
-      twiml.message("Send us your discord id ");
+        twiml.message("Hi ! How can we help you today ? Type 1 to send a sms");
+    }else if(req.body.Body === "1"){
+        textMessage();
+    }
+    else{
+      twiml.message("Welcome to the bot! Type 1 to continue");
     }
     
     res.writeHead(200, { "Content-type": "text/xml" });
